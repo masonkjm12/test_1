@@ -1,0 +1,46 @@
+/* [폼 스타일 연습용 CSS] body와 #registerform 표/버튼 규칙만 정의한 샘플 파일. 현재 CHAPTER10 JSP의 link 대상이 아니므로 페이지에 적용되지 않는다. 적용하려면 해당 JSP head에서 이 파일을 link해야 한다. */
+@charset "utf-8";
+
+body {
+	font-family: "나눔고딕", "맑은 고딕", "돋움", Dotum, Verdana, Tahoma;
+	font-size: 9pt;
+	line-height:170%;
+	color: #666;
+}
+
+
+#registerform {
+	border-top-width: 6px;
+	border-bottom-width: 5px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #dddddd;
+	border-bottom-color: #dddddd;
+}
+
+#registerform th {
+	height: 25px;
+	padding-top: 5px;
+	padding-left: 25px;
+	width: 100px;
+	text-align: left;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #dddddd;
+	background-color: #efefef;
+}
+#registerform tr td {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #dddddd;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	text-align: left;	
+}
+
+#registerform tr .btnstyle {
+	text-align: center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}

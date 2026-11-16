@@ -1,0 +1,112 @@
+<%-- [영화 카탈로그/정렬] 기본은 MovieDao.selectList로 전체 영화를 조회하고, 정렬 폼의 target(정렬 기준)과 direct(asc/desc)를 POST로 받아 selectOrder로 정렬한다. JSTL forEach로 포스터/제목을 출력하며 포스터 링크는 GET movieId를 detail.jsp에 전달한다. 상세 화면의 구매 폼은 purchase.jsp로 연결된다. 디자인은 design.css의 #orderview와 catalogitem/poster/title 규칙을 사용한다. --%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="java.io.*,java.sql.*,my.util.*,my.dao.*,my.model.*, java.util.*" %><!-- my.~java 리소스 연결 -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>고객등록 신청서</title>
+<link href="design.css" rel="stylesheet" type="text/css">
+
+</head>
+<!-- movie정보 list받음. -->
+<body>
+
+  <div class="page_header">
+    	<div class="toplogo"><a href="#"><img src="images/top_logo.jpg" width="276" height="40" alt="beautifullife"></a>
+      </div>
+        <div class="topnav">
+        	<ul>
+            	<li><a href="#"><img src="images/top_menu1.jpg" width="72" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="images/top_menu2.jpg" width="76" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="images/top_menu3.jpg" width="64" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="images/top_menu4.jpg" width="134" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="images/top_menu5.jpg" width="99" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="images/top_menu6.jpg" width="52" height="24" alt="ArtStory"></a></li>
+            </ul>
+        </div>
+  </div>
+     
+     <div class="page_subimg">
+     	<div class="subimgline"></div>
+        <div class="subimg">
+        	<div id="apDivSubimg"></div>
+       </div>
+     </div>
+
+  <div class="page_content">
+    	<div class="leftmenu">
+   	    	<img src="images/left_title.jpg" width="152" height="24" alt="membership"> 
+        	<ul>
+            	<li></li>
+            	<li><a href="#">회원가입</a></li>
+                <li><a href="#">아이디찾기</a></li>
+                <li><a href="#">비번찾기</a></li>
+                <li><a href="#">마이페이지</a></li>
+                <li><a href="#">1:1문의하기</a></li>
+                <li><a href="#">질문내역</a></li>
+                <li><a href="#">후기내역</a></li>
+                <li><a href="#">쿠폰내격</a></li>
+                <li><a href="#">적립금내역</a></li>
+            </ul>
+        
+        
+        </div>
+        <div class="rightcon">
+        <%request.setCharacterEncoding("utf-8"); 
+        	String loginId= (String)session.getAttribute("LOGIN");
+        %>
+                <img src="images/title1.jpg" width="464" height="58" alt="고객등록">
+                <div class="tablestyle">
+                <div id="greeting"><%=loginId %>님 반갑습니다</div>
+                <%
+                Connection conn= ConnectionProvider.getConnection();
+                List<Movie> list=null;
+                String target= request.getParameter("target");
+                String direct= request.getParameter("direct");
+                try{
+                	MovieDao dao=new MovieDao();
+                	if(target == null){
+                		list= dao.selectList(conn);
+                	}else
+                		list=dao.selectOrder(conn, target, direct);
+                }catch(SQLException e){}
+                %>
+                <c:set var="list" value="<%=list %>"/><!-- java객체를 set를 이용해 html의 변수 형태로 변환시킴 -->
+                <div id="orderview">정렬기준<!-- 정렬기준과 순서변경 추가함. -->
+                   <form action="" method="post">
+                   <label for="target"></label>
+                   <select name="target" id="target">
+                   		<option value="freq">선호도:</option>
+                   		<option value="title">제목:</option>
+                   		<option value="maker">제작사:</option>
+                   		<option value="price">가격:</option>
+                   		<option value="openDate">개봉일:</option>
+                   		
+                   </select>
+                   정렬순서
+                   <label for="direct"></label>
+                   <select name="direct" id="direct">
+                   		<option value="desc">내림차순</option>
+                   		<option value="asc">오름차순</option>
+                   </select>
+                   <input type="submit" name="btn" id="btn" value="보기">
+                   </form>
+                 </div> 
+                <c:forEach var="movie" items="${list}">
+                	<div class="catalogitem">
+                    	<div class="poster"><a href="detail.jsp?movieId=${movie.movieId}">
+                    	<img src="./myimages/${movie.poster}" width="200" height="250"></a><!-- detail.jsp로 넘어가게 만듬. -->
+                    	</div>
+                    	<div class="title">${movie.title}</div><!-- 실행하면 div가 밀려서 이상하게 보임, 해결필요, css설정 변경 -->
+                    </div>
+                </c:forEach><!-- forEach문을 이용해 카탈로그를 반복하여 생성시킴. -->
+                </div>
+         </div>
+    </div>
+
+
+</body>
+</html>

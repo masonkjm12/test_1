@@ -1,0 +1,96 @@
+<%-- [로그인 처리] loginform.jsp의 POST 값을 User Bean에 바인딩하고 UserDao.checkPassword로 인증한다. 성공 시 LOGIN 세션을 만들며 ID가 admin이면 list.jsp, 그 외에는 catalog.jsp로 이동한다. 실패 시 경고 후 이전 페이지로 돌아간다. 인증 흐름 뒤 dao.insert(conn,user)도 호출되는 코드가 있으므로 회원 저장 동작과 함께 확인할 것. design.css 사용. --%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="java.io.*,java.sql.*,my.util.*,my.dao.*,my.model.*, java.util.*" %><!-- my.~java 리소스 연결 -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>고객등록 신청서</title>
+<link href="../design.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+  <div class="page_header">
+    	<div class="toplogo"><a href="#"><img src="../images/top_logo.jpg" width="276" height="40" alt="beautifullife"></a>
+      </div>
+        <div class="topnav">
+        	<ul>
+            	<li><a href="#"><img src="../images/top_menu1.jpg" width="72" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="../images/top_menu2.jpg" width="76" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="../images/top_menu3.jpg" width="64" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="../images/top_menu4.jpg" width="134" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="../images/top_menu5.jpg" width="99" height="24" alt="ArtStory"></a></li>
+                <li><a href="#"><img src="../images/top_menu6.jpg" width="52" height="24" alt="ArtStory"></a></li>
+            </ul>
+        </div>
+  </div>
+     
+     <div class="page_subimg">
+     	<div class="subimgline"></div>
+        <div class="subimg">
+        	<div id="apDivSubimg"></div>
+       </div>
+     </div>
+
+  <div class="page_content">
+    	<div class="leftmenu">
+   	    	<img src="../images/left_title.jpg" width="152" height="24" alt="membership"> 
+        	<ul>
+            	<li></li>
+            	<li><a href="#">회원가입</a></li>
+                <li><a href="#">아이디찾기</a></li>
+                <li><a href="#">비번찾기</a></li>
+                <li><a href="#">마이페이지</a></li>
+                <li><a href="#">1:1문의하기</a></li>
+                <li><a href="#">질문내역</a></li>
+                <li><a href="#">후기내역</a></li>
+                <li><a href="#">쿠폰내격</a></li>
+                <li><a href="#">적립금내역</a></li>
+            </ul>
+        
+        
+        </div>
+        <div class="rightcon">
+        <%request.setCharacterEncoding("utf-8"); %>
+                <img src="../images/title1.jpg" width="464" height="58" alt="고객등록">
+                <div class="tablestyle">
+                    <%request.setCharacterEncoding("utf-8"); %>
+                    <jsp:useBean id="user" class="my.model.User"/><!-- admin으로 로그인하면 list.jsp, 다른 유저ID로 로그인하면 catalog.jsp로 진입 -->
+                    <jsp:setProperty property="*" name="user"/>
+                    <%
+                    	Connection conn=ConnectionProvider.getConnection();
+                    	boolean login=true;
+                    	try{
+                    		UserDao dao= new UserDao();
+                    		login =dao.checkPassword(conn, user.getUserId(), user.getPassword());
+                    		if (login){
+                    			session.setAttribute("LOGIN", user.getUserId());
+                    			if(user.getUserId().equals("admin")){
+                    			response.sendRedirect("../list.jsp");
+                    			}else{
+                        			response.sendRedirect("../catalogPaging.jsp");
+                    			}
+                    		}
+                    		else {
+                    %>
+                    <script type="text/javascript">
+                    	alert("페스워드 잘못입력함");
+                    	history.go(-1);
+                    </script>
+                    <%			
+                    		}
+                    		dao.insert(conn, user);
+                    	}catch (SQLException e){}
+                    %>
+                    <%=user.getName() %>DB에 사용자 정보등록이 완료되었습니다.
+                </div>
+         </div>
+    </div>
+
+
+</body>
+</html>
